@@ -2,14 +2,36 @@ service: aws-python-django-dynamodb-api-project
 
 frameworkVersion: '3'
 
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-prune-plugin
+  - serverless-python-requirements
+  - serverless-wsgi
+useDotenv: true
+
 custom:
   tableName: 'device-table-dev'
+  dotenv:
+    logging: false
+  pythonRequirements:
+    dockerizePip: non-linux
+    zip: true
+    fileName: requirements.txt
+  stage: dev
   wsgi:
-    app: app.app
+    app: app.app.wsgi.application
+    packRequirements: false
+  prune:
+    automatic: true
+    number: 3
+
 
 provider:
   name: aws
-  runtime: python3.9
+  region: us-east-2
+  stage: dev
+  deploymentMethod: direct
+  runtime: python3.11
   iam:
     role:
       statements:
@@ -32,9 +54,9 @@ functions:
     events:
       - httpApi: '*'
 
-plugins:
-  - serverless-wsgi
-  - serverless-python-requirements
+# plugins:
+#   - serverless-wsgi
+#   - serverless-python-requirements
 
 resources:
   Resources:
@@ -51,3 +73,10 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: Device_Table
+
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!.venv/**'
+    - '!.git/**'
+

@@ -9,8 +9,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-print('===>'+os.environ.get('IS_OFFLINE'))
-
 if os.environ.get('IS_OFFLINE'):
     dynamodb=boto3.resource("dynamodb", region_name='localhost', endpoint_url='http://localhost:7000')
 else :
