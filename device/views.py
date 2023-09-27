@@ -9,10 +9,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-if os.environ.get('IS_OFFLINE'):
-    dynamodb=boto3.resource("dynamodb", region_name='localhost', endpoint_url='http://localhost:7000')
-else :
-    dynamodb=boto3.resource("dynamodb")
+# if os.environ.get('IS_OFFLINE'):
+#     dynamodb=boto3.resource("dynamodb", region_name='localhost', endpoint_url='http://localhost:7000')
+# else :
+dynamodb=boto3.resource("dynamodb",region_name='us-east-2')
 
 table = dynamodb.Table('Device_Table')
 

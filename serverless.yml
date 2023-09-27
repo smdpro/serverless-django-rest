@@ -56,7 +56,8 @@ functions:
     # layers:
     #   - {Ref: PythonRequirementsLambdaLayer}
     events:
-      - httpApi: '*'
+      - http: ANY /
+      - http: ANY /{proxy+}
 
 
 resources:

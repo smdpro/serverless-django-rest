@@ -30,7 +30,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
+IS_OFFLINE=False
 # Application definition
 
 INSTALLED_APPS = [

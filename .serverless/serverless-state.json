@@ -29,7 +29,9 @@
         }
       },
       "versionFunctions": true,
-      "environment": {},
+      "environment": {
+        "IS_OFFLINE": "True"
+      },
       "compiledCloudFormationTemplate": {
         "AWSTemplateFormatVersion": "2010-09-09",
         "Description": "The AWS CloudFormation template for this Serverless application",
@@ -197,15 +199,17 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/aws-python-django-dynamodb-api-project/dev/1695847351124-2023-09-27T20:42:31.124Z/aws-python-django-dynamodb-api-project.zip"
+                "S3Key": "serverless/aws-python-django-dynamodb-api-project/dev/1695850454144-2023-09-27T21:34:14.144Z/aws-python-django-dynamodb-api-project.zip"
               },
               "Handler": "wsgi_handler.handler",
               "Runtime": "python3.11",
               "FunctionName": "aws-python-django-dynamodb-api-project-dev-api",
               "MemorySize": 1024,
-              "Timeout": 30,
+              "Timeout": 6,
               "Environment": {
-                "Variables": {}
+                "Variables": {
+                  "IS_OFFLINE": "True"
+                }
               },
               "Role": {
                 "Fn::GetAtt": [
@@ -218,37 +222,152 @@
               "ApiLogGroup"
             ]
           },
-          "ApiLambdaVersionamF4YJ1JS944Ets3uP3nFHu3b1heWHcWJQYD22FY": {
+          "ApiLambdaVersioniHSHqGtERVFCbT4qyWANOiBFUmbpY4MCZFLwHl0YayA": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApiLambdaFunction"
               },
-              "CodeSha256": "GIm4R8L7QKCWQgvPPWdW99AAJEEoZCkojWRskNjem98="
+              "CodeSha256": "oBg3RGcqf0wbdY69lveJZrjnZDNI2AqUPeiirBtScX8="
             }
           },
-          "HttpApi": {
-            "Type": "AWS::ApiGatewayV2::Api",
+          "ApiGatewayRestApi": {
+            "Type": "AWS::ApiGateway::RestApi",
             "Properties": {
               "Name": "dev-aws-python-django-dynamodb-api-project",
-              "ProtocolType": "HTTP"
+              "EndpointConfiguration": {
+                "Types": [
+                  "EDGE"
+                ]
+              },
+              "Policy": ""
             }
           },
-          "HttpApiStage": {
-            "Type": "AWS::ApiGatewayV2::Stage",
+          "ApiGatewayResourceProxyVar": {
+            "Type": "AWS::ApiGateway::Resource",
             "Properties": {
-              "ApiId": {
-                "Ref": "HttpApi"
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
               },
-              "StageName": "$default",
-              "AutoDeploy": true,
-              "DefaultRouteSettings": {
-                "DetailedMetricsEnabled": false
+              "PathPart": "{proxy+}",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
               }
             }
           },
-          "ApiLambdaPermissionHttpApi": {
+          "ApiGatewayMethodAny": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "ANY",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "ApiLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "ApiLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayMethodProxyVarAny": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "ANY",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceProxyVar"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "ApiLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "ApiLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayDeployment1695850443512": {
+            "Type": "AWS::ApiGateway::Deployment",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "StageName": "dev"
+            },
+            "DependsOn": [
+              "ApiGatewayMethodAny",
+              "ApiGatewayMethodProxyVarAny"
+            ]
+          },
+          "ApiLambdaPermissionApiGateway": {
             "Type": "AWS::Lambda::Permission",
             "Properties": {
               "FunctionName": {
@@ -277,48 +396,13 @@
                     },
                     ":",
                     {
-                      "Ref": "HttpApi"
+                      "Ref": "ApiGatewayRestApi"
                     },
-                    "/*"
+                    "/*/*"
                   ]
                 ]
               }
             }
-          },
-          "HttpApiIntegrationApi": {
-            "Type": "AWS::ApiGatewayV2::Integration",
-            "Properties": {
-              "ApiId": {
-                "Ref": "HttpApi"
-              },
-              "IntegrationType": "AWS_PROXY",
-              "IntegrationUri": {
-                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"ApiLambdaPermissionHttpApi\"][\"Properties\"][\"FunctionName\"]"
-              },
-              "PayloadFormatVersion": "2.0",
-              "TimeoutInMillis": 30000
-            }
-          },
-          "HttpApiRouteDefault": {
-            "Type": "AWS::ApiGatewayV2::Route",
-            "Properties": {
-              "ApiId": {
-                "Ref": "HttpApi"
-              },
-              "RouteKey": "$default",
-              "Target": {
-                "Fn::Join": [
-                  "/",
-                  [
-                    "integrations",
-                    {
-                      "Ref": "HttpApiIntegrationApi"
-                    }
-                  ]
-                ]
-              }
-            },
-            "DependsOn": "HttpApiIntegrationApi"
           },
           "UsersTable": {
             "Type": "AWS::DynamoDB::Table",
@@ -355,30 +439,21 @@
           "ApiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApiLambdaVersionamF4YJ1JS944Ets3uP3nFHu3b1heWHcWJQYD22FY"
+              "Ref": "ApiLambdaVersioniHSHqGtERVFCbT4qyWANOiBFUmbpY4MCZFLwHl0YayA"
             },
             "Export": {
               "Name": "sls-aws-python-django-dynamodb-api-project-dev-ApiLambdaFunctionQualifiedArn"
             }
           },
-          "HttpApiId": {
-            "Description": "Id of the HTTP API",
-            "Value": {
-              "Ref": "HttpApi"
-            },
-            "Export": {
-              "Name": "sls-aws-python-django-dynamodb-api-project-dev-HttpApiId"
-            }
-          },
-          "HttpApiUrl": {
-            "Description": "URL of the HTTP API",
+          "ServiceEndpoint": {
+            "Description": "URL of the service endpoint",
             "Value": {
               "Fn::Join": [
                 "",
                 [
                   "https://",
                   {
-                    "Ref": "HttpApi"
+                    "Ref": "ApiGatewayRestApi"
                   },
                   ".execute-api.",
                   {
@@ -387,12 +462,13 @@
                   ".",
                   {
                     "Ref": "AWS::URLSuffix"
-                  }
+                  },
+                  "/dev"
                 ]
               ]
             },
             "Export": {
-              "Name": "sls-aws-python-django-dynamodb-api-project-dev-HttpApiUrl"
+              "Name": "sls-aws-python-django-dynamodb-api-project-dev-ServiceEndpoint"
             }
           }
         }
@@ -493,7 +569,7 @@
       },
       "stage": "dev",
       "wsgi": {
-        "app": "app.app.wsgi.application",
+        "app": "app.wsgi.application",
         "packRequirements": false
       }
     },
@@ -506,19 +582,21 @@
     "functions": {
       "api": {
         "handler": "wsgi_handler.handler",
-        "timeout": 30,
         "events": [
           {
-            "httpApi": "*",
-            "resolvedMethod": "ANY"
+            "http": "ANY /"
+          },
+          {
+            "http": "ANY /{proxy+}"
           }
         ],
         "name": "aws-python-django-dynamodb-api-project-dev-api",
         "package": {},
         "memory": 1024,
+        "timeout": 6,
         "runtime": "python3.11",
         "vpc": {},
-        "versionLogicalId": "ApiLambdaVersionamF4YJ1JS944Ets3uP3nFHu3b1heWHcWJQYD22FY"
+        "versionLogicalId": "ApiLambdaVersioniHSHqGtERVFCbT4qyWANOiBFUmbpY4MCZFLwHl0YayA"
       }
     },
     "resources": {
@@ -583,7 +661,7 @@
         ],
         "artifactsS3KeyDirname": "serverless/aws-python-django-dynamodb-api-project/dev/code-artifacts",
         "artifact": "/home/smd/codes/serverless-django-rest/.serverless/aws-python-django-dynamodb-api-project.zip",
-        "artifactDirectoryName": "serverless/aws-python-django-dynamodb-api-project/dev/1695847351124-2023-09-27T20:42:31.124Z"
+        "artifactDirectoryName": "serverless/aws-python-django-dynamodb-api-project/dev/1695850454144-2023-09-27T21:34:14.144Z"
       }
     },
     "layers": {},
@@ -591,7 +669,7 @@
     "artifact": "/home/smd/codes/serverless-django-rest/.serverless/aws-python-django-dynamodb-api-project.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/aws-python-django-dynamodb-api-project/dev/1695847351124-2023-09-27T20:42:31.124Z",
+    "artifactDirectoryName": "serverless/aws-python-django-dynamodb-api-project/dev/1695850454144-2023-09-27T21:34:14.144Z",
     "artifact": "aws-python-django-dynamodb-api-project.zip"
   }
 }
