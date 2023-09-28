@@ -9,7 +9,7 @@ git clone https://github.com/smdpro/serverless-django-rest.git
 cd serverless-django-rest
 ```
 
-### 2. install requerments.txt
+### 2. install requirements.txt
  
 - install python 3.11 from [here](https://www.python.org/downloads/release/python-3103/)
 
