@@ -5,24 +5,24 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework.views import APIView
 import os 
-from dotenv import load_dotenv
-load_dotenv()
 
 
-# if os.environ.get('IS_OFFLINE'):
-#     dynamodb=boto3.resource("dynamodb", region_name='localhost', endpoint_url='http://localhost:7000')
-# else :
-dynamodb=boto3.resource("dynamodb",region_name='us-east-2')
 
-table = dynamodb.Table('Device_Table')
+if os.environ.get('IS_OFFLINE'):
+    dynamodb=boto3.resource("dynamodb", region_name=os.environ.get('REGIN_NAME'), endpoint_url=os.environ.get('ENDPOINT_URL'))
+else :
+    dynamodb=boto3.resource("dynamodb",region_name=os.environ.get('REGIN_NAME'))
+
+table = dynamodb.Table(os.environ.get('TABLE'))
 
 class Create_Controller(APIView):
 
     def post(self, request):
+        
         serializer = DeviceSerializer(data=request.data)
         
         if not serializer.is_valid():
-            return JsonResponse(data={serializer.errors},status=status.HTTP_400_BAD_REQUEST )
+            return Response(data=serializer.errors,status=status.HTTP_400_BAD_REQUEST )
 
         data = serializer.validated_data
         result = table.get_item(Key={"id": data.get("id"),})

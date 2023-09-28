@@ -145,7 +145,7 @@
                     "dynamodb:UpdateItem",
                     "dynamodb:DeleteItem"
                   ],
-                  "Resource": "arn:aws:dynamodb:us-east-2:675174937919:table/Device_Table"
+                  "Resource": "arn:aws:dynamodb:us-east-2:675174937919:table/device-table-dev"
                 }
               ]
             }
@@ -174,7 +174,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/aws-python-django-dynamodb-api-project/dev/1695850454144-2023-09-27T21:34:14.144Z/aws-python-django-dynamodb-api-project.zip"
+          "S3Key": "serverless/aws-python-django-dynamodb-api-project/dev/1695855763789-2023-09-27T23:02:43.789Z/aws-python-django-dynamodb-api-project.zip"
         },
         "Handler": "wsgi_handler.handler",
         "Runtime": "python3.11",
@@ -197,14 +197,14 @@
         "ApiLogGroup"
       ]
     },
-    "ApiLambdaVersioniHSHqGtERVFCbT4qyWANOiBFUmbpY4MCZFLwHl0YayA": {
+    "ApiLambdaVersionph03017eakNW2aPhMIPmWJ1GjUOt3aGfyITzLUyM0": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "oBg3RGcqf0wbdY69lveJZrjnZDNI2AqUPeiirBtScX8="
+        "CodeSha256": "Ur+9FIA3VdEfDfCxzT327hbREnayrnq5gJhpvqzNv5I="
       }
     },
     "ApiGatewayRestApi": {
@@ -329,7 +329,7 @@
         "ApiLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1695850443512": {
+    "ApiGatewayDeployment1695855753048": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -414,7 +414,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersioniHSHqGtERVFCbT4qyWANOiBFUmbpY4MCZFLwHl0YayA"
+        "Ref": "ApiLambdaVersionph03017eakNW2aPhMIPmWJ1GjUOt3aGfyITzLUyM0"
       },
       "Export": {
         "Name": "sls-aws-python-django-dynamodb-api-project-dev-ApiLambdaFunctionQualifiedArn"

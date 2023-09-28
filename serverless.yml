@@ -46,7 +46,7 @@ provider:
             - dynamodb:DeleteItem
           # Resource: 
           #   - Fn::GetAtt: [ Device_Table, Arn ]
-          Resource: "arn:aws:dynamodb:us-east-2:675174937919:table/Device_Table"  
+          Resource: "arn:aws:dynamodb:us-east-2:675174937919:table/device-table-dev"  
   # environment:
   #   USERS_TABLE: ${self:custom.tableName}
 
