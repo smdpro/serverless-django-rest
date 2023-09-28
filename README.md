@@ -1,11 +1,7 @@
 # serverless-django-rest
 
-# Django Restful API Challenge
-
 Implement a simple Restful API on Django using the following tech stack: Python, Django Rest Framework, AWS DynamoDB
 
-
-# How to run this project
 
 ### 1. Clone repository:
 ```bash
