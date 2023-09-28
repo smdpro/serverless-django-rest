@@ -27,7 +27,31 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. AWS Cli Configuration
+### 3. Run Locally
+
+run docker container for dynamodb
+```bash 
+docker run -d -p 7000:8000 amazon/dynamodb-local
+```
+
+run local migration for creating the table
+
+```bash 
+python local_maigration.py
+```
+
+After this, updating .env file.
+```bash
+IS_OFFLINE=True
+REGIN_NAME=localhost
+ENDPOINT_URL=http://localhost:7000
+```
+Run server
+```bash
+ python manage.py runserver
+```
+
+### 4. AWS Cli Configuration
 - Download AWS Cli from [here](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and install it.
 
 - on aws cli terminal:
@@ -45,36 +69,7 @@ $ Default region name [None]: ENTER YOUR REGION
 $ Default output format [None]: json
 ```
 
-### 4. Aws DynamoDB
-
-**You can Skip this section if the table already exists in dynmaoDB**
-
-run docker container for dynamodb
-```bash 
-docker run -d -p 7000:8000 amazon/dynamodb-local
-```
-
-After entering the AWS Secret variables, we can use dynamodb migrator to create our nosql database.
-
-```bash 
-python local_maigration.py
-```
-
-After this, updating .env file.
-```bash
-IS_OFFLINE=True
-REGIN_NAME=localhost
-ENDPOINT_URL=http://localhost:7000
-```
-
-### 6. Run server locally :)
-```bash
- python manage.py runserver
-```
-
-
-
-### 7. Deploy on AWS lambda
+### 5. Deploy on AWS lambda
 
 
 * install serverless:
